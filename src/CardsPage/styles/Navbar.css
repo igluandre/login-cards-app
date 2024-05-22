@@ -1,0 +1,29 @@
+.navbar {
+    height: 70px;
+    background-color: var(--primary-color);
+    padding: 5px 0px;
+  }
+  
+  .navbar .container {
+    justify-content: end;
+  }
+  
+  .navbar nav button {
+    border-radius: 5px;
+    padding: 5px 14px;
+    background-color: var(--light-color);
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition: all 300ms linear;
+    letter-spacing: 1px;
+  }
+  
+  .navbar nav button:hover {
+    opacity: 0.8;
+  }
+  
+  nav.flex {
+    gap: 30px;
+  }
+  

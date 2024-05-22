@@ -1,0 +1,51 @@
+.card {
+    list-style: none;
+    /* border: 1px solid #000; */
+    border-radius: 8px;
+    text-align: center;
+    padding: 0.8rem 1rem;
+    width: 280px;
+    flex-grow: 1;
+    flex-basis: 12%;
+    cursor: pointer;
+    box-shadow:
+      rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+      rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  }
+  
+  .card strong {
+    font-size: 13px;
+  }
+  .card p {
+    margin: 0.3rem 0px 1rem 0px;
+    font-size: 14px;
+  }
+  
+  .card:nth-child(2n) {
+    background-color: rgb(1, 206, 1);
+  }
+  
+  .card:nth-child(2n + 1) {
+    background-color: rgb(213, 6, 6);
+  }
+  
+  .card:nth-child(1) {
+    background-color: yellow;
+  }
+  
+  .drag-over {
+    opacity: 0.7;
+    border: #000 dashed 2px;
+  }
+  
+  /* Small devices (landscape phones, less than 768px) */
+  @media (max-width: 767.98px) {
+    .card strong {
+      font-size: 12px;
+    }
+    .card p {
+      margin: 0.3rem 0px 1rem 0px;
+      font-size: 11px;
+    }
+  }
+  
