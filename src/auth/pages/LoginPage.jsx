@@ -12,7 +12,10 @@ export const LoginPage = () => {
 
   const schema = yup.object().shape({
     username: yup.string().required("Required"),
-    password: yup.string().min(5, 'Debe de tener al menos 5 caracteres').required("Required"),
+    password: yup.string()
+      .min(5, 'Debe de tener al menos 5 caracteres')
+      .matches(/[?=.*\W]/, 'Debe de contener un cáracter especial')
+      .required("Required"),
   })
 
   const { register, handleSubmit, formState: {errors} } = useForm({
