@@ -6,8 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import styled from "styled-components";
 
-
-
 const Section = styled.section`
   min-height: 100vh;
   background-color: var(--secondary-color);
@@ -94,9 +92,7 @@ export const LoginPage = () => {
   const { login } = useContext(AuthContext);
 
   const schema = yup.object().shape({
-    username: yup.string()
-      .min(3, 'Debe tener al menos 3 caracteres')
-      .required("Required"),
+    username: yup.string().required("Required"),
     password: yup.string()
       .min(5, 'Debe de tener al menos 5 caracteres')
       .max(18, 'Debe tener máximo de 18 caracteres')
