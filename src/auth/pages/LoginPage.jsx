@@ -1,27 +1,31 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useFetch } from "../../hooks/";
 import "./styles/LoginPage.css";
 import { AuthContext } from "../context/AuthContext";
 
 export const LoginPage = () => {
-  
+
   const { login } = useContext(AuthContext);
 
   const schema = yup.object().shape({
-    username: yup.string().required("Required"),
+    username: yup.string()
+      .min(3, 'Debe tener al menos 3 caracteres')
+      .required("Required"),
     password: yup.string()
       .min(5, 'Debe de tener al menos 5 caracteres')
-      .matches(/[?=.*\W]/, 'Debe de contener un cáracter especial')
+      .max(18, 'Debe tener máximo de 18 caracteres')
+      .matches(/(?=.*\W)/, 'Debe de contener un cáracter especial')
+      .matches(/[?=.*0-9]/, 'Debe de contener al menos un numero')
       .required("Required"),
   })
 
   const { register, handleSubmit, formState: {errors} } = useForm({
     resolver: yupResolver(schema),
   });
-  
+
   const [isFormValid, setIsFormValid] = useState({
     isValid: true,
     errorLogin: "",
@@ -31,35 +35,53 @@ export const LoginPage = () => {
   const { data: dataApi, isLoading } = useFetch(url);
   const { results = [] } = !!dataApi && dataApi;
 
+  const newPassword = useMemo(() => {
+    if (results[0]?.login.password) {
+      let currentPassword = (results[0]?.login.password)?.split('');
+      const specialCharacteres = '@.#$!%*?&^';
+      const randomNumberCharacter = Math.floor(Math.random() * currentPassword?.length);
+      const randomNumber = Math.floor(Math.random() * currentPassword?.length);
+      currentPassword.splice(randomNumberCharacter, 0, specialCharacteres[randomNumberCharacter])
+      currentPassword.splice(randomNumber, 0, randomNumber)
+
+    return currentPassword.join('')
+    }else{
+      return results[0]?.login.password
+    }
+
+}, [dataApi]);
+
+
   const onSubmit = (data) => {
     const { username, password } = data;
     if (username.length <= 1 || password.length <= 1) return;
 
-    if (username.trim() !== results[0]?.login.username && password.trim() === results[0]?.login.password) {
+    if (username.trim() !== results[0]?.login.username && password.trim() === newPassword) {
       setIsFormValid({
-        isValid: false, 
+        isValid: false,
         errorLogin: 'El username es incorrecto'
       });
-    }else if(username.trim() === results[0]?.login.username && password.trim() !== results[0]?.login.password){
+    }else if(username.trim() === results[0]?.login.username && password.trim() !== newPassword){
       setIsFormValid({
-        isValid: false, 
+        isValid: false,
         errorLogin: 'La contraseña es incorrecta'
       });
-    }else if (username.trim() !== results[0]?.login.username && password.trim() !== results[0]?.login.password) {
+    }else if (username.trim() !== results[0]?.login.username && password.trim() !== newPassword) {
       setIsFormValid({
-        isValid: false, 
+        isValid: false,
         errorLogin: 'Username o contraseña inválidos'
       });
     }else{
-      // login(username);
+      login(username);
       setIsFormValid({
-        isValid: true, 
+        isValid: true,
         errorLogin: ''
       });
-      console.log('login exitoso')
     }
-    
+
   };
+
+
 
   return (
     <>
@@ -73,26 +95,24 @@ export const LoginPage = () => {
                 <strong>Username:</strong> {results[0]?.login.username}
               </p>
               <p>
-                <strong>Password:</strong> {results[0]?.login.password}
+                <strong>Password:</strong> {newPassword}
               </p>
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-container">
-              <label>Username: </label>
-              <input type="text" {...register('username')}/>
+              <input type="text" {...register('username')} placeholder="Username"/>
               <p className="error-login">{errors.username?.message}</p>
             </div>
 
             <div className="input-container">
-              <label>Password: </label>
-              <input {...register('password')}/>
+              <input {...register('password')} placeholder="Password"/>
               <p className="error-login">{errors.password?.message}</p>
             </div>
 
-            { 
-              (!isFormValid.isValid) && <p className="error-login">{isFormValid.errorLogin}</p> 
+            {
+              (!isFormValid.isValid) && <p className="error-login">{isFormValid.errorLogin}</p>
             }
 
             <button type="submit">Login</button>
